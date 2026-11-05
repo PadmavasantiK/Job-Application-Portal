@@ -1,63 +1,64 @@
-CREATE DATABASE JobApplicationPortal;
-USE JobApplicationPortal;
+PRAGMA foreign_keys = ON;
 
--- JobSeeker Table
-CREATE TABLE JobSeeker (
-    user_id INT PRIMARY KEY,
-    first_name VARCHAR(50),
-    middle_name VARCHAR(50),
-    last_name VARCHAR(50),
-    email VARCHAR(100) UNIQUE,
-    skills VARCHAR(255),
-    resume VARCHAR(255)
-) ENGINE=InnoDB;
+CREATE TABLE IF NOT EXISTS JobSeeker (
+    user_id INTEGER PRIMARY KEY,
+    first_name TEXT NOT NULL,
+    middle_name TEXT,
+    last_name TEXT NOT NULL,
+    email TEXT NOT NULL COLLATE NOCASE UNIQUE,
+    skills TEXT NOT NULL,
+    resume TEXT
+);
 
--- Employer Table
-CREATE TABLE Employer (
-    employee_id INT PRIMARY KEY,
-    company_name VARCHAR(100),
-    email VARCHAR(100) UNIQUE,
-    department VARCHAR(100)
-) ENGINE=InnoDB;
+CREATE TABLE IF NOT EXISTS Employer (
+    employee_id INTEGER PRIMARY KEY,
+    company_name TEXT NOT NULL,
+    email TEXT COLLATE NOCASE UNIQUE,
+    department TEXT
+);
 
--- Job Table
-CREATE TABLE Job (
-    job_id INT PRIMARY KEY,
-    title VARCHAR(100),
-    description TEXT,
-    location VARCHAR(100),
-    posted_date DATE,
-    salary DECIMAL(12,2),
-    degree VARCHAR(100),
-    age INT,
-    employer_id INT,
+CREATE TABLE IF NOT EXISTS Job (
+    job_id INTEGER PRIMARY KEY,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    location TEXT NOT NULL,
+    posted_date TEXT NOT NULL,
+    salary NUMERIC CHECK (salary IS NULL OR salary >= 0),
+    degree TEXT,
+    age INTEGER CHECK (age IS NULL OR age >= 0),
+    employer_id INTEGER NOT NULL,
     FOREIGN KEY (employer_id) REFERENCES Employer(employee_id)
-) ENGINE=InnoDB;
+);
+CREATE INDEX IF NOT EXISTS idx_job_employer ON Job(employer_id);
+CREATE INDEX IF NOT EXISTS idx_job_posted_date ON Job(posted_date);
 
--- Application Table
-CREATE TABLE Application (
-    application_id INT PRIMARY KEY,
-    applied_date DATE,
-    status VARCHAR(50),
-    user_id INT,
-    job_id INT,
+CREATE TABLE IF NOT EXISTS Application (
+    application_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    applied_date TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'Pending'
+        CHECK (status IN ('Pending','Shortlisted','Interview','Selected','Rejected')),
+    user_id INTEGER NOT NULL,
+    job_id INTEGER NOT NULL,
     FOREIGN KEY (user_id) REFERENCES JobSeeker(user_id),
-    FOREIGN KEY (job_id) REFERENCES Job(job_id)
-) ENGINE=InnoDB;
+    FOREIGN KEY (job_id) REFERENCES Job(job_id),
+    UNIQUE (user_id, job_id)
+);
+CREATE INDEX IF NOT EXISTS idx_application_status ON Application(status);
+CREATE INDEX IF NOT EXISTS idx_application_job ON Application(job_id);
 
--- Admin Table
-CREATE TABLE Admin (
-    admin_id INT PRIMARY KEY,
-    name VARCHAR(100),
-    email VARCHAR(100) UNIQUE
-) ENGINE=InnoDB;
+CREATE TABLE IF NOT EXISTS Admin (
+    admin_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL COLLATE NOCASE UNIQUE,
+    password_hash TEXT,
+    role TEXT NOT NULL DEFAULT 'admin' CHECK (role = 'admin')
+);
 
--- Interview Table
-CREATE TABLE Interview (
-    interview_id INT PRIMARY KEY,
-    application_id INT,
-    date DATE,
-    mode VARCHAR(50),
+CREATE TABLE IF NOT EXISTS Interview (
+    interview_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    application_id INTEGER NOT NULL,
+    date TEXT,
+    mode TEXT,
     feedback TEXT,
     FOREIGN KEY (application_id) REFERENCES Application(application_id)
-) ENGINE=InnoDB;
+);

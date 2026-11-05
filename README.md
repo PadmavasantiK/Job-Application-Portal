@@ -1,48 +1,53 @@
 # Job Application Portal
 
-A web-based Job Application Portal for managing job postings, job seekers, and applications. Built with Flask (Python) and MySQL as a DBMS project.
+A Flask job portal backed by SQLite. SQLite is included with Python, so you do not need to install or run a database server.
 
 ## Features
 
-- Add, view, and manage jobs
-- Register new job seekers
-- Apply for jobs and track application status
-- Admin dashboard with sidebar navigation
-- Clean, accessible interface using Bootstrap
-- MySQL triggers and procedures for robust database logic
+- Admin login with hashed passwords and admin-only management pages
+- Add and browse jobs; search by title, location, or company with pagination
+- Register job seekers and accept applications from registered applicant emails
+- Track application statuses and view applicant application/interview history
+- Dashboard analytics and CSV exports for applicants and applications
+- Automated tests using a temporary SQLite database
 
-## Technology Stack
-- **Frontend:** HTML, CSS, Bootstrap
-- **Backend:** Python (Flask)
-- **Database:** MySQL
+## Setup
 
-## Getting Started
+1. Install Python 3.9 or newer.
+2. From this project directory, install Flask:
 
-### 1. Clone the repository
+   ```sh
+   python -m pip install -r requirements.txt
+   ```
 
-### 2. Install Python dependencies
-Python 3.x
-VS Code
-MySQL Community Server
-Flutter
-### 3. Set up the MySQL database
+3. Initialize the database and create the first admin account:
 
-- Import the SQL scripts in the `My SQL/` folder:
-  - `tables.sql`
-  - `triggers.sql`
-  - `procedures.sql`
-  - `insertion command.sql`
-- Update your `app.py` database configuration with your MySQL username/password as needed.
+   ```sh
+   flask --app app init-db
+   flask --app app create-admin
+   ```
 
-### 4. Run the Flask application
+   The admin command prompts for a name, email, and password. SQLite creates `instance/job_application_portal.sqlite3` automatically.
 
-- Visit [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser to use the portal.
+4. Set a session secret and run the app:
 
-## License
+   ```sh
+   export FLASK_SECRET_KEY="replace-this-with-a-long-random-value"
+   flask --app app run
+   ```
 
-This project is for educational purposes.
+   Open http://127.0.0.1:5000. Public job listings are at `/jobs`.
 
-## Author
+## Tests
 
-Padmavasanti K  
-(DBMS Project Submission)
+Run the automated route tests with:
+
+```sh
+python -m unittest discover -s tests -v
+```
+
+The tests create and remove a temporary SQLite database; they do not change the app's database.
+
+## Database files
+
+`schema.sql` is the SQLite schema used by the Flask app. `My SQL/Database.sql` contains the same SQLite schema for convenience. Other historical files in `My SQL/` contain MySQL-specific examples and are not used by the app.

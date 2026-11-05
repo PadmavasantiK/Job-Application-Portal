@@ -19,20 +19,22 @@
       <h2 class="mb-4 ps-3 fw-bold border-bottom pb-2">Job Portal</h2>
       <ul class="nav flex-column">
         <li class="nav-item"><a href="/dashboard" class="nav-link">Dashboard</a></li>
+        <li class="nav-item"><a href="/jobs" class="nav-link">Browse Jobs</a></li>
         <li class="nav-item"><a href="/addjob" class="nav-link">Add Job</a></li>
         <li class="nav-item"><a href="/addjobseeker" class="nav-link">Add Job Seeker</a></li>
         <li class="nav-item"><a href="/jobseekers" class="nav-link active">View Job Seekers</a></li>
         <li class="nav-item"><a href="/applications" class="nav-link">View Applications</a></li>
-        <li class="nav-item mt-2"><a href="/logout" class="nav-link text-warning">Logout</a></li>
+        <li class="nav-item mt-2"><form method="post" action="/logout"><button class="nav-link text-warning border-0 bg-transparent" type="submit">Logout</button></form></li>
       </ul>
     </nav>
     <main class="col-lg-9 col-md-8 py-4">
       <div class="main-panel p-4">
         <h2 class="mb-4 text-center fw-bold">Job Seekers</h2>
+        <a class="btn btn-outline-primary mb-3" href="{{ url_for('export_applicants') }}">Export applicants CSV</a>
         <ul class="list-group">
             {% for seeker in jobseekers %}
             <li class="list-group-item">
-                <strong>{{ seeker.user_id }}</strong>: {{ seeker.first_name }} {{ seeker.last_name }}<br>
+                <strong><a href="{{ url_for('applicant_detail', user_id=seeker.user_id) }}">{{ seeker.user_id }}</a></strong>: {{ seeker.first_name }} {{ seeker.last_name }}<br>
                 <span class="text-muted">Email:</span> {{ seeker.email }} <br>
                 <span class="text-success">Skills:</span> {{ seeker.skills }}
             </li>

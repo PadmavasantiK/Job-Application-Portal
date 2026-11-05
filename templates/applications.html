@@ -19,16 +19,19 @@
       <h2 class="mb-4 ps-3 fw-bold border-bottom pb-2">Job Portal</h2>
       <ul class="nav flex-column">
         <li class="nav-item"><a href="/dashboard" class="nav-link">Dashboard</a></li>
+        <li class="nav-item"><a href="/jobs" class="nav-link">Browse Jobs</a></li>
         <li class="nav-item"><a href="/addjob" class="nav-link">Add Job</a></li>
         <li class="nav-item"><a href="/addjobseeker" class="nav-link">Add Job Seeker</a></li>
         <li class="nav-item"><a href="/jobseekers" class="nav-link">View Job Seekers</a></li>
         <li class="nav-item"><a href="/applications" class="nav-link active">View Applications</a></li>
-        <li class="nav-item mt-2"><a href="/logout" class="nav-link text-warning">Logout</a></li>
+        <li class="nav-item mt-2"><form method="post" action="/logout"><button class="nav-link text-warning border-0 bg-transparent" type="submit">Logout</button></form></li>
       </ul>
     </nav>
     <main class="col-lg-9 col-md-8 py-4">
       <div class="main-panel p-4">
         <h2 class="mb-4 text-center fw-bold">Applications</h2>
+        <a class="btn btn-outline-primary mb-3" href="{{ url_for('export_applications') }}">Export applications CSV</a>
+        {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
         <ul class="list-group">
             {% for app in applications %}
             <li class="list-group-item">
@@ -36,7 +39,16 @@
                 <strong>User ID:</strong> {{ app.user_id }}<br>
                 <strong>Job ID:</strong> {{ app.job_id }}<br>
                 <strong>Status:</strong> <span class="badge bg-info text-dark">{{ app.status }}</span><br>
-                <strong>Date:</strong> {{ app.applied_date }}
+                <strong>Date:</strong> {{ app.applied_date }}<br>
+                <strong>Applicant:</strong> {{ app.applicant_name }} · <strong>Job:</strong> {{ app.job_title }}
+                <form method="post" class="d-flex gap-2 mt-2 align-items-center">
+                  <input type="hidden" name="application_id" value="{{ app.application_id }}">
+                  <label class="visually-hidden" for="status-{{ app.application_id }}">Status</label>
+                  <select id="status-{{ app.application_id }}" class="form-select form-select-sm w-auto" name="status">
+                    {% for status in statuses %}<option value="{{ status }}" {% if app.status == status %}selected{% endif %}>{{ status }}</option>{% endfor %}
+                  </select>
+                  <button class="btn btn-sm btn-outline-primary" type="submit">Update status</button>
+                </form>
             </li>
             {% else %}
             <li class="list-group-item">No applications found.</li>
@@ -45,4 +57,7 @@
       </div>
     </main>
   </div>
-</
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -24,18 +24,28 @@
       <h2 class="mb-4 ps-3 fw-bold border-bottom pb-2">Job Portal</h2>
       <ul class="nav flex-column">
         <li class="nav-item"><a href="/dashboard" class="nav-link active">Dashboard</a></li>
+        <li class="nav-item"><a href="/jobs" class="nav-link">Browse Jobs</a></li>
         <li class="nav-item"><a href="/addjob" class="nav-link">Add Job</a></li>
         <li class="nav-item"><a href="/addjobseeker" class="nav-link">Add Job Seeker</a></li>
         <li class="nav-item"><a href="/jobseekers" class="nav-link">View Job Seekers</a></li>
         <li class="nav-item"><a href="/applications" class="nav-link">View Applications</a></li>
-        <li class="nav-item mt-2"><a href="/logout" class="nav-link text-warning">Logout</a></li>
+        <li class="nav-item mt-2"><form method="post" action="/logout"><button class="nav-link text-warning border-0 bg-transparent" type="submit">Logout</button></form></li>
       </ul>
     </nav>
     <main class="col-lg-9 col-md-8 py-4">
       <div class="main-panel">
         <div class="container-fluid text-center">
-          <h1 class="mb-2 mt-3 fw-bold text-primary">Welcome!</h1>
-          <p class="lead text-secondary">Please use the sidebar to get started.</p>
+          <h1 class="mb-2 mt-3 fw-bold text-primary">Admin dashboard</h1>
+          <p class="lead text-secondary">Welcome, {{ session.get('user', 'Administrator') }}.</p>
+          <div class="row g-3 mt-3 text-start">
+            <div class="col-md-4"><div class="card h-100"><div class="card-body"><div class="text-secondary">Jobs</div><div class="display-6">{{ totals.total_jobs }}</div></div></div></div>
+            <div class="col-md-4"><div class="card h-100"><div class="card-body"><div class="text-secondary">Applicants</div><div class="display-6">{{ totals.total_applicants }}</div></div></div></div>
+            <div class="col-md-4"><div class="card h-100"><div class="card-body"><div class="text-secondary">Applications</div><div class="display-6">{{ totals.total_applications }}</div></div></div></div>
+          </div>
+          <h2 class="h5 text-start mt-4">Application status distribution</h2>
+          <div class="table-responsive"><table class="table table-striped text-start"><thead><tr><th>Status</th><th>Applications</th></tr></thead><tbody>
+          {% for item in statuses %}<tr><td>{{ item.status }}</td><td>{{ item.total }}</td></tr>{% else %}<tr><td colspan="2">No applications yet.</td></tr>{% endfor %}
+          </tbody></table></div>
         </div>
       </div>
     </main>

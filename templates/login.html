@@ -14,10 +14,16 @@
     <div class="card login-card shadow mx-auto" style="max-width: 400px;">
         <div class="card-body">
             <h2 class="text-center mb-4 text-primary fw-bold">Login</h2>
+            <p class="text-center text-secondary">Administrator access</p>
+            {% if error %}<div class="alert alert-danger" role="alert">{{ error }}</div>{% endif %}
             <form method="post">
                 <div class="mb-3">
                     <label class="form-label">Email</label>
                     <input class="form-control" type="email" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="password">Password</label>
+                    <input class="form-control" id="password" type="password" name="password" autocomplete="current-password" required>
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Login</button>
             </form>
